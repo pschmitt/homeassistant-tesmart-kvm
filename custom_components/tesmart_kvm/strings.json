@@ -1,0 +1,49 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add TESmart KVM switch",
+        "description": "Connect Home Assistant to a TESmart HDMI KVM switch over the network.",
+        "data": {
+          "host": "Host",
+          "name": "Name",
+          "port": "Port",
+          "inputs": "Number of inputs"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the KVM switch.",
+      "unknown": "Unexpected error."
+    },
+    "abort": {
+      "already_configured": "This KVM switch is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "TESmart KVM options",
+        "data": {
+          "scan_interval": "Update interval in seconds"
+        }
+      }
+    }
+  },
+  "services": {
+    "send_raw": {
+      "name": "Send raw command",
+      "description": "Send a raw hex command to the KVM switch and optionally return the response.",
+      "fields": {
+        "command": {
+          "name": "Command",
+          "description": "Hex-encoded command bytes, e.g. aabb031000ee."
+        },
+        "device_id": {
+          "name": "Device",
+          "description": "The KVM switch to send the command to. Only required when multiple switches are configured."
+        }
+      }
+    }
+  }
+}

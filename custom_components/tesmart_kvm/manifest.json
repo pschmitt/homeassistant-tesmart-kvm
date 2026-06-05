@@ -1,0 +1,17 @@
+{
+  "domain": "tesmart_kvm",
+  "name": "TESmart KVM",
+  "codeowners": [
+    "@pschmitt"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/pschmitt/homeassistant-tesmart-kvm",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/pschmitt/homeassistant-tesmart-kvm/issues",
+  "loggers": [
+    "custom_components.tesmart_kvm"
+  ],
+  "requirements": [],
+  "version": "0.1.0"
+}

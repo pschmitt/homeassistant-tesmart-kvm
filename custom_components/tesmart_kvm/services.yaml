@@ -1,0 +1,12 @@
+send_raw:
+  fields:
+    command:
+      required: true
+      example: "aabb031000ee"
+      selector:
+        text:
+    device_id:
+      required: false
+      selector:
+        device:
+          integration: tesmart_kvm

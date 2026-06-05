@@ -1,0 +1,8 @@
+{
+  "name": "TESmart KVM",
+  "domains": [
+    "tesmart_kvm"
+  ],
+  "homeassistant": "2025.1.0",
+  "render_readme": true
+}
