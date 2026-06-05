@@ -15,10 +15,9 @@ no shell scripts.
 - **Switches** (write-only settings, optimistic state)
   - `Buzzer`: beep on input change
   - `Input detection` (disabled by default)
-- **Sensor**
-  - `MAC address` (diagnostic): the switch has no serial/MAC query in its protocol, so
-    the MAC is looked up best-effort in the kernel neighbor (ARP) table and also
-    registered as a device connection
+- **Device info**: the switch has no serial/MAC query in its protocol, so the MAC
+  address is looked up best-effort in the kernel neighbor (ARP) table and registered
+  as a device connection
 - **Service**
   - `tesmart_kvm.send_raw`: send an arbitrary hex command (e.g. `aabb031000ee`) and
     optionally get the raw response back
