@@ -10,6 +10,15 @@
           "port": "Port",
           "inputs": "Number of inputs"
         }
+      },
+      "reconfigure": {
+        "title": "Reconfigure TESmart KVM switch",
+        "description": "Update the connection settings.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "inputs": "Number of inputs"
+        }
       }
     },
     "error": {
@@ -17,7 +26,8 @@
       "unknown": "Unexpected error."
     },
     "abort": {
-      "already_configured": "This KVM switch is already configured."
+      "already_configured": "This KVM switch is already configured.",
+      "reconfigure_successful": "Configuration updated."
     }
   },
   "options": {

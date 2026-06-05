@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Mapping
 from typing import Any
 
 import voluptuous as vol
@@ -34,6 +35,23 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _connection_schema(defaults: Mapping[str, Any]) -> dict[Any, Any]:
+    """Build the shared connection schema fields."""
+    return {
+        vol.Required(CONF_HOST, default=defaults.get(CONF_HOST, "")): TextSelector(),
+        vol.Required(
+            CONF_PORT, default=defaults.get(CONF_PORT, DEFAULT_PORT)
+        ): NumberSelector(
+            NumberSelectorConfig(min=1, max=65535, mode=NumberSelectorMode.BOX)
+        ),
+        vol.Required(
+            CONF_INPUTS, default=defaults.get(CONF_INPUTS, DEFAULT_INPUTS)
+        ): NumberSelector(
+            NumberSelectorConfig(min=2, max=MAX_INPUTS, mode=NumberSelectorMode.BOX, step=1)
+        ),
+    }
 
 
 class TesmartConfigFlow(ConfigFlow, domain=DOMAIN):
@@ -86,28 +104,57 @@ class TesmartConfigFlow(ConfigFlow, domain=DOMAIN):
             step_id="user",
             data_schema=vol.Schema(
                 {
-                    vol.Required(
-                        CONF_HOST, default=defaults.get(CONF_HOST, "")
-                    ): TextSelector(),
                     vol.Optional(
                         CONF_NAME, default=defaults.get(CONF_NAME, "TESmart KVM")
                     ): TextSelector(),
-                    vol.Required(
-                        CONF_PORT, default=defaults.get(CONF_PORT, DEFAULT_PORT)
-                    ): NumberSelector(
-                        NumberSelectorConfig(
-                            min=1, max=65535, mode=NumberSelectorMode.BOX
-                        )
-                    ),
-                    vol.Required(
-                        CONF_INPUTS, default=defaults.get(CONF_INPUTS, DEFAULT_INPUTS)
-                    ): NumberSelector(
-                        NumberSelectorConfig(
-                            min=2, max=MAX_INPUTS, mode=NumberSelectorMode.BOX, step=1
-                        )
-                    ),
+                    **_connection_schema(defaults),
                 }
             ),
+            errors=errors,
+        )
+
+    async def async_step_reconfigure(
+        self,
+        user_input: dict[str, Any] | None = None,
+    ) -> ConfigFlowResult:
+        """Handle reconfiguration of an existing entry."""
+        errors: dict[str, str] = {}
+        entry = self._get_reconfigure_entry()
+
+        if user_input is not None:
+            host = user_input[CONF_HOST]
+            port = int(user_input[CONF_PORT])
+            client = TesmartClient(host=host, port=port)
+            try:
+                await client.async_get_input()
+            except TesmartError:
+                errors["base"] = "cannot_connect"
+            except Exception:  # noqa: BLE001
+                _LOGGER.exception(
+                    "Unexpected exception while validating TESmart config"
+                )
+                errors["base"] = "unknown"
+            else:
+                new_unique_id = f"{host}:{port}"
+                for other in self._async_current_entries():
+                    if (
+                        other.entry_id != entry.entry_id
+                        and other.unique_id == new_unique_id
+                    ):
+                        return self.async_abort(reason="already_configured")
+                return self.async_update_reload_and_abort(
+                    entry,
+                    data={
+                        CONF_HOST: host,
+                        CONF_PORT: port,
+                        CONF_INPUTS: int(user_input[CONF_INPUTS]),
+                    },
+                    unique_id=new_unique_id,
+                )
+
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=vol.Schema(_connection_schema(user_input or entry.data)),
             errors=errors,
         )
 
