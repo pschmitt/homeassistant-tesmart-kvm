@@ -25,4 +25,5 @@ async def async_get_config_entry_diagnostics(
         },
         "current_input": coordinator.data,
         "last_update_success": coordinator.last_update_success,
+        "mac": coordinator.mac,
     }

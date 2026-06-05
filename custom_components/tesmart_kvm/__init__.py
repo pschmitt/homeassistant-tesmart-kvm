@@ -12,6 +12,7 @@ from homeassistant.core import HomeAssistant
 from .api import TesmartClient
 from .const import DEFAULT_PORT, PLATFORMS
 from .coordinator import TesmartDataUpdateCoordinator
+from .helpers import get_mac_address
 from .services import async_setup_services
 
 
@@ -43,6 +44,12 @@ async def async_setup_entry(
     )
     coordinator = TesmartDataUpdateCoordinator(hass, config_entry, client)
     await coordinator.async_config_entry_first_refresh()
+
+    # The first refresh just talked to the switch, so the neighbor table
+    # should be fresh. Best effort: the switch has no MAC/serial query.
+    coordinator.mac = await hass.async_add_executor_job(
+        get_mac_address, config_entry.data[CONF_HOST]
+    )
 
     config_entry.runtime_data = TesmartRuntimeData(
         client=client,

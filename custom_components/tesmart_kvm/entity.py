@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.device_registry import (
+    CONNECTION_NETWORK_MAC,
+    DeviceInfo,
+    format_mac,
+)
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import CONF_INPUTS, DEFAULT_INPUTS, DOMAIN
@@ -24,8 +28,14 @@ class TesmartEntity(CoordinatorEntity[TesmartDataUpdateCoordinator]):
         """Return device information."""
         entry = self.coordinator.config_entry
         inputs = entry.data.get(CONF_INPUTS, DEFAULT_INPUTS)
+        connections: set[tuple[str, str]] = set()
+        if self.coordinator.mac:
+            connections.add(
+                (CONNECTION_NETWORK_MAC, format_mac(self.coordinator.mac))
+            )
         return DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
+            connections=connections,
             name=entry.title,
             manufacturer="TESmart",
             model=f"{inputs}-port HDMI KVM switch",

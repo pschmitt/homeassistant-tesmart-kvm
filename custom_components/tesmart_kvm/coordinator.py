@@ -38,6 +38,8 @@ class TesmartDataUpdateCoordinator(DataUpdateCoordinator[int]):
         )
         self.config_entry = config_entry
         self.client = client
+        # Discovered from the neighbor table after the first connection
+        self.mac: str | None = None
 
     async def _async_update_data(self) -> int:
         """Fetch the currently active input."""
