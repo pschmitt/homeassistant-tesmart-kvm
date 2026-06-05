@@ -1,5 +1,7 @@
 # TESmart KVM for Home Assistant
 
+<img src="logo.png" alt="TESmart logo" width="300">
+
 `tesmart_kvm` is a Home Assistant custom integration for
 [TESmart](https://buytesmart.com/) HDMI KVM switches with a LAN port. It speaks the
 vendor's simple hex protocol over TCP (port 5000 by default) — no extra dependencies,
@@ -53,6 +55,13 @@ The integration is configured from the Home Assistant UI:
 
 - [pschmitt/tesmart.sh](https://github.com/pschmitt/tesmart.sh) — the shell client this
   integration replaces
+
+## Branding
+
+This repository bundles TESmart logo assets (`icon.png`, `logo.png` and
+`custom_components/tesmart_kvm/brand/`). TESmart and related marks belong to their
+respective owners. The integration code is GPL-3.0, but the bundled third-party logos
+are not relicensed under GPL.
 
 ## License
 
