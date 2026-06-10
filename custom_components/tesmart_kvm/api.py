@@ -70,19 +70,19 @@ class TesmartClient:
 
         try:
             writer.write(payload)
-            await writer.drain()
+            await asyncio.wait_for(writer.drain(), timeout=CONNECT_TIMEOUT)
             try:
                 return await asyncio.wait_for(reader.read(64), timeout=READ_TIMEOUT)
             except TimeoutError:
                 return b""
-        except OSError as err:
+        except (TimeoutError, OSError) as err:
             raise TesmartConnectionError(
                 f"I/O error talking to {self.host}:{self.port}: {err}"
             ) from err
         finally:
             writer.close()
-            with contextlib.suppress(OSError):
-                await writer.wait_closed()
+            with contextlib.suppress(TimeoutError, OSError):
+                await asyncio.wait_for(writer.wait_closed(), timeout=CONNECT_TIMEOUT)
 
     async def _send(
         self,

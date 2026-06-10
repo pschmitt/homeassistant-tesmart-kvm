@@ -2,18 +2,24 @@
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
 
 from .api import TesmartClient
 from .const import DEFAULT_PORT, PLATFORMS
 from .coordinator import TesmartDataUpdateCoordinator
 from .helpers import get_mac_address
 from .services import async_setup_services
+
+# Cap the first refresh: the client's connect-retry loop can take ~50s
+# against an unreachable switch, well past HA's setup patience.
+FIRST_REFRESH_TIMEOUT = 15
 
 
 @dataclass
@@ -43,7 +49,13 @@ async def async_setup_entry(
         port=config_entry.data.get(CONF_PORT, DEFAULT_PORT),
     )
     coordinator = TesmartDataUpdateCoordinator(hass, config_entry, client)
-    await coordinator.async_config_entry_first_refresh()
+    try:
+        async with asyncio.timeout(FIRST_REFRESH_TIMEOUT):
+            await coordinator.async_config_entry_first_refresh()
+    except TimeoutError as err:
+        raise ConfigEntryNotReady(
+            f"Timeout connecting to {config_entry.data[CONF_HOST]}"
+        ) from err
 
     # The first refresh just talked to the switch, so the neighbor table
     # should be fresh. Best effort: the switch has no MAC/serial query.
