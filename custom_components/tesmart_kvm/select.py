@@ -78,11 +78,11 @@ class TesmartLedTimeoutSelect(TesmartEntity, SelectEntity, RestoreEntity):
     _attr_icon = "mdi:timer-outline"
     _attr_entity_category = EntityCategory.CONFIG
     _attr_assumed_state = True
-    _attr_options = list(LED_TIMEOUT_OPTIONS)
 
     def __init__(self, coordinator: TesmartDataUpdateCoordinator) -> None:
         """Initialize the select."""
         super().__init__(coordinator, "led_timeout")
+        self._attr_options = list(LED_TIMEOUT_OPTIONS)
         self._attr_current_option = LED_TIMEOUT_NEVER
 
     async def async_added_to_hass(self) -> None:
@@ -95,9 +95,7 @@ class TesmartLedTimeoutSelect(TesmartEntity, SelectEntity, RestoreEntity):
     async def async_select_option(self, option: str) -> None:
         """Set the LED timeout."""
         try:
-            await self.coordinator.client.async_set_led_timeout(
-                LED_TIMEOUT_OPTIONS[option]
-            )
+            await self.coordinator.client.async_set_led_timeout(LED_TIMEOUT_OPTIONS[option])
         except TesmartError as err:
             raise HomeAssistantError(str(err)) from err
         self._attr_current_option = option

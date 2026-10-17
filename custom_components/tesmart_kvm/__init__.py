@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass
 import logging
+from dataclasses import dataclass
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -42,9 +42,7 @@ async def async_setup(hass: HomeAssistant, config: dict[str, Any]) -> bool:
     return True
 
 
-async def async_setup_entry(
-    hass: HomeAssistant, config_entry: TesmartConfigEntry
-) -> bool:
+async def async_setup_entry(hass: HomeAssistant, config_entry: TesmartConfigEntry) -> bool:
     """Set up TESmart KVM from a config entry."""
     client = TesmartClient(
         host=config_entry.data[CONF_HOST],
@@ -57,9 +55,7 @@ async def async_setup_entry(
     )
 
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
-    config_entry.async_on_unload(
-        config_entry.add_update_listener(async_update_listener)
-    )
+    config_entry.async_on_unload(config_entry.add_update_listener(async_update_listener))
 
     async def _async_first_refresh() -> None:
         try:
@@ -94,15 +90,11 @@ async def async_setup_entry(
     return True
 
 
-async def async_unload_entry(
-    hass: HomeAssistant, config_entry: TesmartConfigEntry
-) -> bool:
+async def async_unload_entry(hass: HomeAssistant, config_entry: TesmartConfigEntry) -> bool:
     """Unload a TESmart KVM config entry."""
     return await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS)
 
 
-async def async_update_listener(
-    hass: HomeAssistant, config_entry: TesmartConfigEntry
-) -> None:
+async def async_update_listener(hass: HomeAssistant, config_entry: TesmartConfigEntry) -> None:
     """Reload the integration after options changes."""
     await hass.config_entries.async_reload(config_entry.entry_id)

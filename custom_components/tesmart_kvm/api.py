@@ -109,8 +109,7 @@ class TesmartClient:
             if last_error is not None:
                 raise last_error
             raise TesmartConnectionError(
-                f"No valid response from {self.host}:{self.port} "
-                f"after {retries} attempt(s)"
+                f"No valid response from {self.host}:{self.port} after {retries} attempt(s)"
             )
 
     async def async_get_input(self) -> int:

@@ -30,9 +30,7 @@ class TesmartEntity(CoordinatorEntity[TesmartDataUpdateCoordinator]):
         inputs = entry.data.get(CONF_INPUTS, DEFAULT_INPUTS)
         connections: set[tuple[str, str]] = set()
         if self.coordinator.mac:
-            connections.add(
-                (CONNECTION_NETWORK_MAC, format_mac(self.coordinator.mac))
-            )
+            connections.add((CONNECTION_NETWORK_MAC, format_mac(self.coordinator.mac)))
         return DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
             connections=connections,

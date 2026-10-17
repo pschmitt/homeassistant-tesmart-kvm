@@ -7,7 +7,6 @@ from collections.abc import Mapping
 from typing import Any
 
 import voluptuous as vol
-
 from homeassistant.config_entries import (
     ConfigEntry,
     ConfigFlow,
@@ -41,9 +40,7 @@ def _connection_schema(defaults: Mapping[str, Any]) -> dict[Any, Any]:
     """Build the shared connection schema fields."""
     return {
         vol.Required(CONF_HOST, default=defaults.get(CONF_HOST, "")): TextSelector(),
-        vol.Required(
-            CONF_PORT, default=defaults.get(CONF_PORT, DEFAULT_PORT)
-        ): NumberSelector(
+        vol.Required(CONF_PORT, default=defaults.get(CONF_PORT, DEFAULT_PORT)): NumberSelector(
             NumberSelectorConfig(min=1, max=65535, mode=NumberSelectorMode.BOX)
         ),
         vol.Required(
@@ -82,9 +79,7 @@ class TesmartConfigFlow(ConfigFlow, domain=DOMAIN):
             except TesmartError:
                 errors["base"] = "cannot_connect"
             except Exception:  # noqa: BLE001
-                _LOGGER.exception(
-                    "Unexpected exception while validating TESmart config"
-                )
+                _LOGGER.exception("Unexpected exception while validating TESmart config")
                 errors["base"] = "unknown"
             else:
                 await self.async_set_unique_id(f"{host}:{port}")
@@ -130,17 +125,12 @@ class TesmartConfigFlow(ConfigFlow, domain=DOMAIN):
             except TesmartError:
                 errors["base"] = "cannot_connect"
             except Exception:  # noqa: BLE001
-                _LOGGER.exception(
-                    "Unexpected exception while validating TESmart config"
-                )
+                _LOGGER.exception("Unexpected exception while validating TESmart config")
                 errors["base"] = "unknown"
             else:
                 new_unique_id = f"{host}:{port}"
                 for other in self._async_current_entries():
-                    if (
-                        other.entry_id != entry.entry_id
-                        and other.unique_id == new_unique_id
-                    ):
+                    if other.entry_id != entry.entry_id and other.unique_id == new_unique_id:
                         return self.async_abort(reason="already_configured")
                 return self.async_update_reload_and_abort(
                     entry,
