@@ -54,13 +54,15 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: TesmartConfigEntr
         coordinator=coordinator,
     )
 
+    if coordinator.data is None:
+        coordinator.last_update_success = False
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
     config_entry.async_on_unload(config_entry.add_update_listener(async_update_listener))
 
     async def _async_first_refresh() -> None:
         try:
             async with asyncio.timeout(FIRST_REFRESH_TIMEOUT):
-                await coordinator.async_config_entry_first_refresh()
+                await coordinator.async_refresh()
         except TimeoutError:
             _LOGGER.warning(
                 "Timeout connecting to TESmart KVM at %s; entities will retry in the background",
