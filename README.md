@@ -1,78 +1,44 @@
-# TESmart KVM for Home Assistant
+<p align="center">
+  <img src="logo.png" width="128" alt="TESmart logo">
+</p>
 
-<img src="logo.png" alt="TESmart logo" width="300">
+<p align="center">
+  <a href="https://my.home-assistant.io/redirect/marketplace_repository/?owner=pschmitt&amp;repository=homeassistant-tesmart-kvm&amp;category=integration"><img src="https://my.home-assistant.io/badges/marketplace_repository.svg" alt="Open this integration in Home Assistant Marketplace"></a>
+</p>
 
-`tesmart_kvm` is a Home Assistant custom integration for
-[TESmart](https://buytesmart.com/) HDMI KVM switches with a LAN port. It speaks the
-vendor's simple hex protocol over TCP (port 5000 by default) — no extra dependencies,
-no shell scripts.
+<h1 align="center">TESmart KVM for Home Assistant</h1>
+
+<p align="center">Switch inputs and control settings on TESmart LAN HDMI KVMs over TCP.</p>
+
+The integration speaks TESmart's hex protocol on port 5000 by default; it
+does not need a separate shell client or extra dependencies.
 
 ## Features
 
-- **Select**
-  - `Input`: shows the currently active input and switches inputs
-  - `LED timeout`: `never` / `10s` / `30s` (write-only setting, optimistic state)
-- **Switches** (write-only settings, optimistic state)
-  - `Buzzer`: beep on input change
-  - `Input detection` (disabled by default)
-- **Device info**: the switch has no serial/MAC query in its protocol, so the MAC
-  address is looked up best-effort in the kernel neighbor (ARP) table and registered
-  as a device connection
-- **Service**
-  - `tesmart_kvm.send_raw`: send an arbitrary hex command (e.g. `aabb031000ee`) and
-    optionally get the raw response back
+- **Input selection:** Report the current input and switch between available inputs.
+- **Device settings:** Control buzzer, input detection and LED timeout with optimistic state for write-only values.
+- **Raw service:** Send a hex command and optionally read its response through `tesmart_kvm.send_raw`.
+- **Device identity:** Resolve the switch's MAC from the local neighbor table when available; the protocol does not expose a serial or MAC query.
 
-## Installation
+## Install
 
-### Home Assistant 2026.11 and newer
+Use the Marketplace badge above on Home Assistant 2026.11 or later to add this
+repository as a custom integration. On older versions, add it as a HACS
+custom repository of type **Integration**. Install and restart Home Assistant.
+The badge does not imply a public catalog listing. For manual installation,
+copy `custom_components/tesmart_kvm/` into Home Assistant's
+`custom_components/` directory and restart.
 
-[![Open this integration in Home Assistant Marketplace](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=pschmitt&repository=homeassistant-tesmart-kvm&category=integration)
+## Quick start
 
-Click the badge to add the repository, then install the integration. Restart
-Home Assistant and add the integration from **Settings → Devices & services**.
+1. Add **TESmart KVM** under **Settings → Devices & services → Add integration**.
+2. Enter the switch's host, port (default `5000`) and number of inputs.
+3. Use its Input selector to switch between connected devices.
 
-### HACS (older installations)
-
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=pschmitt&repository=homeassistant-tesmart-kvm&category=integration)
-
-1. For Home Assistant versions before 2026.11, open HACS and add
-   `https://github.com/pschmitt/homeassistant-tesmart-kvm` as a custom
-   repository of type **Integration**.
-2. Install **TESmart KVM**.
-3. Restart Home Assistant.
-
-### Manual
-
-Copy `custom_components/tesmart_kvm` from this repository into your Home Assistant
-`custom_components/tesmart_kvm` directory and restart.
-
-## Configuration
-
-The integration is configured from the Home Assistant UI:
-
-1. Go to **Settings → Devices & services**.
-2. Add **TESmart KVM**.
-3. Enter the host, port (default `5000`) and the number of inputs of your switch.
-
-## Notes
-
-- The switch only reports the currently active input. Buzzer, LED timeout and input
-  detection are write-only: the integration tracks the last value it sent
-  (restored across restarts).
-- The integration polls the active input every 30 seconds by default (configurable).
-
-## Related
-
-- [pschmitt/tesmart.sh](https://github.com/pschmitt/tesmart.sh) — the shell client this
-  integration replaces
-
-## Branding
-
-This repository bundles TESmart logo assets (`icon.png`, `logo.png` and
-`custom_components/tesmart_kvm/brand/`). TESmart and related marks belong to their
-respective owners. The integration code is GPL-3.0, but the bundled third-party logos
-are not relicensed under GPL.
+The integration polls the active input every 30 seconds by default; other
+settings are write-only and restore the last value sent by Home Assistant.
 
 ## License
 
-GPL-3.0. TESmart and related marks belong to their respective owners.
+[GPL-3.0](LICENSE). TESmart logos belong to their respective owners and are
+not relicensed under GPL.
